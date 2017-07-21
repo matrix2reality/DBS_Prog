@@ -1,118 +1,180 @@
-##  Payroll Calculator
-# Svetlana Nicolenco
-# May 2017
+### ASSIGNMENT 
+### Module Code: B8IT102 
+### Module Title: B8IT102 Programming Essentials
+### Lecturer Name: Eoin Meehan
+### Nicolenco Svetlana
+### 10265376
+### 04 June 2017
 
-# receive input for employee name
+
+### input employee name 
 def get_empName():
-    print()
-    while True:
-        empName = raw_input('Please enter your Firstaname and Lastname: ')
-        if all(char.isalpha() and len(empName)< 35 for char in empName):
-            break
-        print("Please enter a valid name! :c")
-    print()
+
+    invalid = 1
+    
+    while invalid:
+        invalid=0
+
+        empName = raw_input("Please enter your name: ")
+        
+        if not empName.isalpha():   ### name validation - alphabetic
+            print "Please enter a valid name"
+            invalid = 1
+
+        elif len(empName) > 35:   ### name validation - no more than 35 char
+            print "Please enter a valid name"
+            invalid = 1
+            
     return empName
-	
-# get employee ID
+
+name = get_empName()
+
+### get employee number
 def get_empID():
-    print()
-    while True:
-        empID = raw_input('Please enter your employee number: ')
-        if all(is_alphanumeric() and len(empName)< 10 for char in empName) () :
-            break
-        print("Please enter a valid ID! :c")
-    print()
+
+    invalid = 1
+    
+    while invalid:
+        invalid=0
+
+        empID = raw_input("Please enter your number: ")
+        
+        if not empID.isalnum():   ### number validation - alphanumeric
+            print "Please enter a valid number"
+            invalid = 1
+
+        elif len(empID) > 10:  ### number validation - 10 characters max
+            print "Please enter a valid number"
+            invalid = 1
+            
     return empID
 
-### get week ending date
-from datetime import datetime
-def validate(datetime_string):
-        try:
-            return datetime.strptime(datetime_string,"%d/%m/%Y %I:%M %p")   ### "%m/%d/%Y %I:%M %p"
-        except ValueError:
-            return False
+empID = get_empID()
 
-### get total hours worked per week by the employee and their pay rate			
-def get_weekHrs(weekHrs, payRate):
-    weekHrs = int(raw_input('Please enter hours/week worked: '))
+import string
+
+def get_weekDate():
+	invalid = 1	
+
+	while invalid == 1:
+		invalid = 0			
+
+		weekDate = raw_input("Please enter date for week ending in format dd/mm/yyyy : ")
+	
+
+	
+		weekDate = string.replace(weekDate, " ", "")
+		weekDate = string.replace(weekDate, chr(9), "")
+	
+# string Validation contains "0"-"9"or "/"
+
+		dd, mm, yyyy = string.split(weekDate, "/")
+	
+		for ch in weekDate:
+			if (ord(ch) < 47 or ord(ch) >59):
+				invalid = 1
+				print "Please eneter a valid date : ",ch
+
+# Now check the others
+
+		if invalid != 1:
+			idd, imm, iyyyy = int(dd), int(mm), int(yyyy)
+		
+			if len(weekDate) != 10:  ### date validation - 10 characters 
+				print "Please enter a valid date"
+				invalid = 1
+			elif string.count(weekDate,"/") != 2:   ### date validation - 2 '/'
+				print "Please enter a valid date"
+				invalid = 1
+			elif imm < 1 or imm > 12:  ### month validation 1-12 
+				print "Please enter a valid date"
+				invalid = 1
+			elif idd <1 or idd > 31:   ### date validation 1-31 
+				print "Please enter a valid date"
+				invalid = 1
+	return weekDate
+	
+week = get_weekDate()
+
+### get hours per week form the employee
+def get_weekHrs():
+    weekHrs = float(raw_input('Please enter hours/week worked: '))
     while weekHrs > 60 or weekHrs < 1:
         print ('Please enter your normal working hours')
-        weekHrs = int(raw_input('Please enter hours/week worked: '))
+        weekHrs = float(raw_input('Please enter hours/week worked: '))
     payRate = float(input('Please enter your pay rate (hour)?: '))
     while payRate < 1.00 or payRate > 50.00:
         print ('Please enter a valid payRate')
         payRate = float(input('Please enter your pay rate (hour)?: '))
-    return whrs, payRate
+    return weekHrs, payRate
+	
+weekHrs, payRate = get_weekHrs()
 
-### calculate total hours worked 	
-def compute_totHrs(weekHrs):
-    if weekHrs <= 37.5:
-        return [weekHrs, False]
-    else:
-        overtime = weekHrs - 37.5
-        return [overtime, True]
+### get a tax rate in a range 10%, 17.5%, 20%		
+def get_taxRate():
 
+    invalid = 1
+    
+    while invalid:
+        invalid=0
 
+        taxRate = float(raw_input("Please enter your tax rate: "))
+        if (taxRate != 10 and
+           taxRate != 17.5 and
+           taxRate != 20):
+           print "Please enter your tax rate."
+           invalid = 1
+           
+            
+    return taxRate
+
+taxRate = get_taxRate()
 
 ### calculate overtime 	hours and overtime payment 
-def compute_overtimePay(normHrs, oHrs, oPay):
-    oRate = 1.5 * payRate
-    normHrs = min(weekHrs, 37.5)
-    oHrs = max(weekHrs-37.5, 0)
-    oPay = oHrs * oRate
-    return normHrs, oHrs, oPay
+def computepay():
 
-### calculate nett payment 
-def compute_netPay(netPay, taxCharge):
-    taxSum = (totPay * taxRate) / 100
-	taxCharge = round(taxDeductions, 2)
-	netPay = totPay + oPay - taxCharge
-	netPay = round(netPay, 2)
-    return netPay, taxCharge
-
-		
-def printPayslip1(EmpName, ID, Hrs, Rate, Total, TaxRate, TaxCharge, Nett):		
-	 print('Payroll Information\n')
-     print('Pay rate  $',format(rate,'7.2f'))
-     print('Regular Hours  ',format(hours, '2.0f'))
-     print('Overtime Hours  0')
-     print('Regular pay  $',format(hours * rate,'7.2f'))
-     print('Overtime pay  $ 0.00')
-     print('Total pay:  $',format(hours * rate, '7.2f'))
-	 
-def printPayslip2(EmpName, ID, Hrs, Rate, Total, TaxRate, TaxCharge, Nett):
-	print('Payroll Information\n')
-	print('Pay rate  $',format(rate,'7.2f'))
-    print('Regular Hours  ',format(hours, '2.0f'))
-    print('Overtime Hours  $',format(othours, '2.0f'))
-    print('Regular pay  $',format(hours * rate,'7.2f'))
-    print('Overtime pay  $',format(otpay, '7.2f'))
-    print('Total pay:  $',format(regularpay + otpay, '7.2f'))	
-	
-def main():
-    empName, empID, weekEnds, weekHrs, payRate = getInput()
-    if totPay(totHrs(weekHrs), payRate) == None:
-    printPayslip1(EmpName, ID, Hrs, Rate, Total, TaxRate, TaxCharge, Nett):   
+    if weekHrs < 37.5:
+        normHrs = weekHrs
+        overHrs = 0
     else:
-    otpay, regularpay, othours = rateCal(timeCal(hours), rate)        
-main()
+        normHrs = 37.5
+        overHrs = weekHrs - 37.5
+
+    if weekHrs > 37.5:
+        overRate = 1.5 * payRate
+        overPay = (weekHrs-37.5) * overRate
+    else:
+        overPay = 0
+
+    return normHrs, overHrs, overPay
+
+normHrs, overHrs, overPay  = computepay()
+
+def calculate_grossPay():
+    standPay = normHrs * payRate
+    grossPay = standPay + overPay
+	
+    return standPay, grossPay
+	
+standPay, grossPay = calculate_grossPay()
 
 
+taxAmount = (grossPay * taxRate)/100
+nettSalary = grossPay - taxAmount 
+    
+print 
+print '---------------PAYSLIP------------------'
+print '--------WEEK ENDING', week
+print
+print 'Employee Name', name
+print 'Number', empID
+print 'Earnings ---------------------Deductions'
+print '------------------Hours----Rate-----Total----tax rate(%)'
+print 'Hours (normal)', weekHrs, payRate, grossPay, taxRate
+print '-----------overtime hours---overtime pay----tax amount'
+print 'Overtime', overHrs, overPay, taxAmount
+print
+print 'Your gross salary are $%.2f.' % grossPay
+print 'your net salary are $%.2f.' % nettSalary
 
-#display/print payslip
-def printPayslip(EmpName, ID, Hrs, Rate, Total, TaxRate, TaxCharge, Nett):
-  print 
-  print '---------------PAYSLIP------------------'
-  print '-------------WEEK ENDING' weekEnds
-  print
-  print 'Employee\n', % EmpName
-  print 'Number $%6.0f.', % empID
-  print 'Earnings --------------------------Deductions'
-  print '-----------Hours---Rate---Total-----------'
-  print 'Hours (normal)', Hrs, Rate, Total, TaxRate
-  print 'Overtime', Hrs, Rate, Total
-  print 'Gross Pay: %g' %(grossPay)
-  'Deductions', TaxCharge
-  print 'Nett pay', Nett
-  print
-  
+
